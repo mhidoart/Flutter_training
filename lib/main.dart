@@ -1,6 +1,6 @@
+import 'package:first_app_flutter/result.dart';
 import 'package:flutter/material.dart';
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,30 +15,45 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   var cp = 0;
-  void _answerQuestion() {
-    print('answer chosen ! ');
-    setState(() {
-      cp = cp + 1;
-    });
-    print('counter state $cp');
-  }
-
+  var totalScore = 0;
   @override
   Widget build(BuildContext context) {
-    var questions = [
+    var _questions = [
       {
         'questionText': 'what\' your favorit color?',
-        'answers': ['Black', 'Red', 'Green', 'Yello'],
+        'answers': [
+          {'text': 'Black', 'score': 10},
+          {'text': 'Red', 'score': 15},
+          {'text': 'White', 'score': 50}
+        ],
       },
       {
         'questionText': 'what\'s your favorit animal? ',
-        'answers': ['Cat', 'Bird', 'Snake', 'Gecko'],
+        'answers': [
+          {'text': 'cat', 'score': 10},
+          {'text': 'gecko', 'score': 15},
+          {'text': 'rat', 'score': -20},
+        ],
       },
       {
         'questionText': 'what\'s your favorit friend? ',
-        'answers': ['me', 'branda', 'zetta', 'Max'],
+        'answers': [
+          {'text': 'Black', 'score': 10},
+          {'text': 'fe', 'score': 15},
+          {'text': 'Max', 'score': 20},
+          {'text': 'Brenda', 'score': 50}
+        ],
       },
     ];
+    void _answerQuestion(int score) {
+      print('answer chosen ! ');
+      setState(() {
+        print('we have more questions ! ');
+        cp = cp + 1;
+        totalScore += score;
+      });
+      print('counter state $cp');
+    }
 
     return MaterialApp(
       home: Scaffold(
@@ -48,14 +63,12 @@ class _MyAppState extends State<MyApp> {
           titleSpacing: 1.2,
           centerTitle: true,
         ),
-        body: Column(
-          children: [
-            Question(questions[cp]['questionText']),
-            ...(questions[cp]['answers'] as List<String>).map((a) {
-              return Answer(_answerQuestion, a);
-            }).toList(),
-          ],
-        ),
+        body: cp < _questions.length
+            ? Quiz(
+                answerQuestion: _answerQuestion,
+                question: _questions,
+                questionIndex: cp)
+            : Result(totalScore),
       ),
     );
   }
